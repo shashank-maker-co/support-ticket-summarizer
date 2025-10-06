@@ -1,8 +1,9 @@
 # Project Context Document
 
-**Last Updated:** 2025-10-06
+**Last Updated:** 2025-10-06 (Post Phase 1-3 Restructuring)
 **Current Branch:** `main`
 **GitHub Repo:** https://github.com/shashank-maker-co/support-ticket-summarizer
+**Last Deployment:** 2025-10-06 (Worker: Version 6e06152d)
 
 ---
 
@@ -65,36 +66,57 @@ copy button
 ```
 braintrust/
 ├── .github/workflows/
-│   └── deploy.yml              # GitHub Actions - auto-deploy to Pages
+│   └── deploy.yml                    # GitHub Actions - auto-deploy to Pages
+├── shared/                           # ✨ NEW: Shared logic (Phase 3)
+│   ├── types.ts                      # TypeScript interfaces
+│   ├── prompt-builder.ts             # TypeScript prompt builder
+│   ├── prompt-builder.js             # JavaScript prompt builder (for worker)
+│   └── package.json                  # Module config
+├── evals/                            # ✨ RENAMED: tests/ → evals/ (Phase 2)
+│   ├── fixtures/
+│   │   └── test-cases.ts             # Centralized test data
+│   ├── scorers/                      # Modular scorer functions
+│   │   ├── section-completeness.ts
+│   │   ├── keyword-relevance.ts
+│   │   ├── color-specificity.ts
+│   │   ├── typography.ts
+│   │   ├── comprehensiveness.ts
+│   │   ├── markdown-quality.ts
+│   │   ├── actionability.ts
+│   │   └── index.ts                  # Exports all scorers
+│   ├── archive/                      # Old evaluations (preserved)
+│   │   ├── app.eval.ts               # Support ticket eval
+│   │   └── compare-configs.eval.ts
+│   └── redesign-brief.eval.ts        # Main evaluation suite
 ├── cloudflare-worker/
-│   ├── worker.js               # API proxy (handles Claude requests)
-│   ├── wrangler.toml           # Cloudflare config
-│   └── README.md               # Worker deployment guide
+│   ├── worker.js                     # API proxy (uses shared/prompt-builder.js)
+│   ├── wrangler.toml                 # Cloudflare config
+│   └── README.md                     # Worker deployment guide
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx             # Main React app (10 questions + results)
-│   │   ├── App.css             # Styling
-│   │   ├── main.tsx            # Entry point
-│   │   ├── index.css           # Global styles
-│   │   └── vite-env.d.ts       # TypeScript env types
+│   │   ├── App.tsx                   # Main React app (10 questions + results)
+│   │   ├── App.css                   # Styling (includes random button styles)
+│   │   ├── main.tsx                  # Entry point
+│   │   ├── index.css                 # Global styles
+│   │   └── vite-env.d.ts             # TypeScript env types
 │   ├── index.html
-│   ├── vite.config.ts          # Build config (base: /support-ticket-summarizer/)
+│   ├── vite.config.ts                # Build config (base: /support-ticket-summarizer/)
 │   └── package.json
-├── src/
-│   └── app.ts                  # OLD: Support ticket logic (not used in new app)
-├── backend/
-│   └── server.ts               # OLD: Express server (not used in new app)
-├── tests/
-│   ├── app.eval.ts             # Braintrust evaluations (OLD)
-│   └── compare-configs.eval.ts
-├── .env                        # LOCAL ONLY - contains API keys
+├── .env                              # LOCAL ONLY - contains API keys
 ├── .env.example
 ├── .gitignore
-├── package.json                # Root dependencies
-├── README.md                   # Main documentation
-├── DEPLOYMENT.md               # Deployment guide
-└── PROJECT_CONTEXT.md          # This file
+├── package.json                      # Root dependencies
+├── README.md                         # Main documentation
+├── DEPLOYMENT.md                     # Deployment guide
+├── TODO.md                           # ✨ NEW: Task tracking across sessions
+└── PROJECT_CONTEXT.md                # This file
 ```
+
+**🗑️ Deleted in Phase 1:**
+- `src/` - Old support ticket logic (deleted)
+- `backend/` - Old Express server (deleted)
+- `experiment1.ts` - Unused experiment file (deleted)
+- `test.js` - Unused test file (deleted)
 
 ---
 
@@ -191,11 +213,12 @@ Format in clean Markdown.
 ### 1. Cloudflare Worker
 ```bash
 cd cloudflare-worker
-wrangler login
-wrangler deploy
-wrangler secret put ANTHROPIC_API_KEY
+wrangler login                    # One-time: authenticate with Cloudflare
+wrangler deploy                   # Deploy to production
+wrangler secret put ANTHROPIC_API_KEY  # Set API key (encrypted)
 ```
-**URL:** https://support-ticket-api.workers.dev
+**Production URL:** https://support-ticket-api.support-ticket-api.workers.dev
+**Latest Deployment:** 2025-10-06, Version ID: 6e06152d
 
 ### 2. GitHub Pages
 - **Enabled in:** Repo Settings → Pages → Source: GitHub Actions
@@ -205,13 +228,13 @@ wrangler secret put ANTHROPIC_API_KEY
 
 ### 3. Local Development
 ```bash
-# Backend (Worker)
+# Backend (Worker) - Terminal 1
 cd cloudflare-worker
-wrangler dev  # Runs at localhost:8787
+wrangler dev --port 8787  # Runs at localhost:8787
 
-# Frontend
+# Frontend - Terminal 2
 cd frontend
-npm run dev   # Runs at localhost:3000
+npm run dev               # Runs at localhost:3000 (or 3001 if 3000 is busy)
 ```
 
 ---
@@ -266,43 +289,86 @@ npm run dev
 
 ### Deployment
 ```bash
-# Deploy Worker
+# Deploy Worker to production
 cd cloudflare-worker && wrangler deploy
 
-# Deploy Frontend (manual - builds and pushes to gh-pages branch)
-cd frontend && npm run deploy
-
-# OR auto-deploy via GitHub Actions (on push to main)
+# Deploy Frontend (auto-deploy via GitHub Actions on push to main)
 git push origin main
+
+# Check deployment status
+# - Worker: https://dash.cloudflare.com
+# - Frontend: https://github.com/shashank-maker-co/support-ticket-summarizer/actions
 ```
 
 ---
 
-## Known Issues / TODO
+## Project Restructuring (2025-10-06)
+
+### ✅ Phase 1: Cleanup Legacy Code (COMPLETED)
+**Commit:** `9c80c95`
+- Deleted legacy `backend/`, `src/`, `experiment1.ts`, `test.js`
+- Created `evals/archive/` directory
+- Moved old evaluations to archive
+- **Result:** Clean codebase, removed unused files
+
+### ✅ Phase 2: Reorganize Eval Structure (COMPLETED)
+**Commit:** `e104bd8`
+- Renamed `tests/` → `evals/` (industry standard)
+- Created `evals/fixtures/test-cases.ts` with centralized test data
+- Created `evals/scorers/` with 7 modular scorers:
+  - section-completeness.ts
+  - keyword-relevance.ts
+  - color-specificity.ts
+  - typography.ts
+  - comprehensiveness.ts
+  - markdown-quality.ts
+  - actionability.ts
+- Created `evals/scorers/index.ts` to export all scorers
+- **Result:** Modular, maintainable evaluation suite
+
+### ✅ Phase 3: Extract Shared Logic (COMPLETED)
+**Commit:** `50f7cac`
+- Created `shared/` directory with:
+  - `types.ts` - TypeScript interfaces
+  - `prompt-builder.ts` - TypeScript prompt builder
+  - `prompt-builder.js` - JavaScript version for worker
+  - `package.json` - Module config
+- Updated `cloudflare-worker/worker.js` to import shared prompt builder
+- **Result:** Single source of truth for prompt generation, DRY principle
 
 ### Current Status (2025-10-06)
-- ✅ Branches created and pushed
-- ✅ Old app backed up to `support-ticket-app` branch
-- ✅ Frontend rebuilt with 10 questions
-- ✅ Cloudflare Worker logic updated
-- ✅ End-to-end testing completed
-- ✅ Deployed to production on `main` branch
+- ✅ All 3 restructuring phases completed
 - ✅ Random data fill button added for testing
-- ✅ Manual deployment script added (`npm run deploy`)
+- ✅ Deployed to production (Worker Version: 6e06152d)
+- ✅ TODO.md created for tracking progress across sessions
+- ✅ Evaluation suite with 7 custom scorers operational
+- ✅ Shared prompt logic used by worker and evals
 
-### Recent Updates
-- **Random Fill Feature:** Added "🎲 Fill with Random Data" button to quickly populate form with mock data for testing
-- **Deployment:** Set up gh-pages deployment with `npm run deploy` command
-- **Dependencies:** Added gh-pages package for manual deployments
+### Evaluation Infrastructure
+**Run evaluations:**
+```bash
+npx braintrust eval evals/redesign-brief.eval.ts
+```
 
-### Future Enhancements
-- [ ] Add "Download as PDF" option
-- [ ] Share generated brief via URL
-- [ ] Save brief history (requires backend/storage)
-- [ ] A/B test different question flows
-- [ ] Analytics (track which questions correlate with best briefs)
-- [ ] Add Braintrust evaluations for the redesign brief generator
-- [ ] Improve error handling and loading states
+**Current Scorers:**
+1. Section Completeness - Checks for required sections
+2. Keyword Relevance - Validates topic mentions
+3. Color Specificity - Ensures color recommendations with hex codes
+4. Typography - Checks for font suggestions
+5. Comprehensiveness - Validates minimum content length
+6. Markdown Quality - Checks formatting
+7. Actionability - Ensures implementation prompt exists
+
+**Test Cases:** 5 scenarios covering e-commerce, B2B SaaS, portfolio, non-profit, restaurant websites
+
+### Future Enhancements (See TODO.md)
+- [ ] Add LLM-as-judge scorer (use Claude to evaluate quality)
+- [ ] Add prompt A/B testing (compare different prompt variations)
+- [ ] Set up CI/CD to run evals on every PR
+- [ ] Add "Download as PDF" option to frontend
+- [ ] Add brief history/storage feature
+- [ ] Add more test cases (15-20 total)
+- [ ] Model comparison (Haiku vs Sonnet vs Opus)
 
 ---
 
@@ -382,23 +448,24 @@ git branch --show-current
 # 3. Pull latest changes
 git pull origin main
 
-# 4. Check status
-git status
+# 4. Review current state
+cat TODO.md                    # See task tracking
+cat PROJECT_CONTEXT.md         # See full context
+git log --oneline -5          # See recent commits
 
-# 5. See what's been done
-git log --oneline -5
-
-# 6. Read this file for context
-cat PROJECT_CONTEXT.md
-
-# 7. Start local development
+# 5. Start local development
 # Terminal 1: Start worker
-cd cloudflare-worker && wrangler dev
+cd cloudflare-worker && wrangler dev --port 8787
 
 # Terminal 2: Start frontend
 cd frontend && npm run dev
 
-# 8. Test locally at http://localhost:3000
+# 6. Test locally
+# - Frontend: http://localhost:3000 (or 3001)
+# - Worker: http://localhost:8787
+
+# 7. Run evaluations (optional)
+npx braintrust eval evals/redesign-brief.eval.ts
 ```
 
 ---
