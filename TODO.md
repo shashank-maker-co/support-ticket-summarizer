@@ -21,7 +21,7 @@ This document tracks the progress of restructuring the braintrust project to fol
 
 ---
 
-## 📋 Phase 2: Reorganize Eval Structure (0/7 completed)
+## ✅ Phase 2: Reorganize Eval Structure (COMPLETED)
 
 ### Goals:
 - Follow industry standard naming (evals/ instead of tests/)
@@ -30,11 +30,11 @@ This document tracks the progress of restructuring the braintrust project to fol
 
 ### Tasks:
 
-- [ ] Rename `tests/` directory to `evals/`
-- [ ] Create `evals/fixtures/` directory
-- [ ] Extract test cases to `evals/fixtures/test-cases.ts`
-- [ ] Create `evals/scorers/` directory
-- [ ] Extract scorers to separate files in `evals/scorers/`:
+- [x] Rename `tests/` directory to `evals/`
+- [x] Create `evals/fixtures/` directory
+- [x] Extract test cases to `evals/fixtures/test-cases.ts`
+- [x] Create `evals/scorers/` directory
+- [x] Extract scorers to separate files in `evals/scorers/`:
   - `section-completeness.ts`
   - `keyword-relevance.ts`
   - `color-specificity.ts`
@@ -43,11 +43,11 @@ This document tracks the progress of restructuring the braintrust project to fol
   - `markdown-quality.ts`
   - `actionability.ts`
   - `index.ts` (exports all scorers)
-- [ ] Update `evals/redesign-brief.eval.ts` with new imports
-- [ ] Commit and push eval reorganization
+- [x] Update `evals/redesign-brief.eval.ts` with new imports
+- [x] Commit and push eval reorganization
 
-**Status:** Not started
-**Estimated time:** 15 minutes
+**Completed:** 2025-10-06
+**Commit:** `e104bd8` - Phase 2: Reorganize eval structure following best practices
 
 ---
 
