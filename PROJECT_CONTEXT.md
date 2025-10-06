@@ -1,7 +1,7 @@
 # Project Context Document
 
 **Last Updated:** 2025-10-06
-**Current Branch:** `redesign-brief-generator`
+**Current Branch:** `main`
 **GitHub Repo:** https://github.com/shashank-maker-co/support-ticket-summarizer
 
 ---
@@ -55,8 +55,8 @@ copy button
 ### Phase 2: Website Redesign Brief Generator (CURRENT)
 - Pivoted to help users create website redesign briefs
 - Simplified use case, more viral potential
-- **Development branch:** `redesign-brief-generator`
-- **Production branch:** `main` (will merge when ready)
+- **Active branch:** `main` (merged from `redesign-brief-generator`)
+- **Status:** Live in production
 
 ---
 
@@ -220,14 +220,13 @@ npm run dev   # Runs at localhost:3000
 
 | Branch | Purpose | Status |
 |--------|---------|--------|
-| `main` | Production (currently support ticket app) | Stable |
-| `support-ticket-app` | Backup of old app | Frozen |
-| `redesign-brief-generator` | New app development | **ACTIVE** |
+| `main` | Production (redesign brief generator) | **ACTIVE** |
+| `support-ticket-app` | Backup of old support ticket app | Frozen |
 
 **Workflow:**
-1. Work on `redesign-brief-generator`
-2. Test thoroughly
-3. Merge to `main` when ready
+1. Work directly on `main` branch
+2. Test locally before pushing
+3. Push to deploy to production automatically
 4. Old app always accessible in `support-ticket-app`
 
 ---
@@ -236,11 +235,14 @@ npm run dev   # Runs at localhost:3000
 
 ### Git
 ```bash
-# Switch to working branch
-git checkout redesign-brief-generator
+# Check current branch (should be main)
+git branch --show-current
 
-# Revert to old app
+# Revert to old app (if needed)
 git checkout support-ticket-app
+
+# Return to current app
+git checkout main
 
 # See all branches
 git branch -a
@@ -267,8 +269,11 @@ npm run dev
 # Deploy Worker
 cd cloudflare-worker && wrangler deploy
 
-# Deploy Frontend (auto via GitHub Actions on push)
-git push origin redesign-brief-generator
+# Deploy Frontend (manual - builds and pushes to gh-pages branch)
+cd frontend && npm run deploy
+
+# OR auto-deploy via GitHub Actions (on push to main)
+git push origin main
 ```
 
 ---
@@ -277,12 +282,18 @@ git push origin redesign-brief-generator
 
 ### Current Status (2025-10-06)
 - ✅ Branches created and pushed
-- ✅ Old app backed up
-- 🔄 **IN PROGRESS:** Rebuilding frontend with 10 questions
-- ⏳ **TODO:** Update Cloudflare Worker logic
-- ⏳ **TODO:** Update branding/docs
-- ⏳ **TODO:** Test end-to-end
-- ⏳ **TODO:** Merge to main
+- ✅ Old app backed up to `support-ticket-app` branch
+- ✅ Frontend rebuilt with 10 questions
+- ✅ Cloudflare Worker logic updated
+- ✅ End-to-end testing completed
+- ✅ Deployed to production on `main` branch
+- ✅ Random data fill button added for testing
+- ✅ Manual deployment script added (`npm run deploy`)
+
+### Recent Updates
+- **Random Fill Feature:** Added "🎲 Fill with Random Data" button to quickly populate form with mock data for testing
+- **Deployment:** Set up gh-pages deployment with `npm run deploy` command
+- **Dependencies:** Added gh-pages package for manual deployments
 
 ### Future Enhancements
 - [ ] Add "Download as PDF" option
@@ -290,6 +301,8 @@ git push origin redesign-brief-generator
 - [ ] Save brief history (requires backend/storage)
 - [ ] A/B test different question flows
 - [ ] Analytics (track which questions correlate with best briefs)
+- [ ] Add Braintrust evaluations for the redesign brief generator
+- [ ] Improve error handling and loading states
 
 ---
 
@@ -363,20 +376,29 @@ git push origin redesign-brief-generator
 # 1. Navigate to project
 cd /Users/shashankshukla/braintrust
 
-# 2. Checkout working branch
-git checkout redesign-brief-generator
+# 2. Check you're on main branch
+git branch --show-current
 
-# 3. Check status
+# 3. Pull latest changes
+git pull origin main
+
+# 4. Check status
 git status
 
-# 4. See what's been done
+# 5. See what's been done
 git log --oneline -5
 
-# 5. Read this file for context
+# 6. Read this file for context
 cat PROJECT_CONTEXT.md
 
-# 6. Continue development
+# 7. Start local development
+# Terminal 1: Start worker
+cd cloudflare-worker && wrangler dev
+
+# Terminal 2: Start frontend
 cd frontend && npm run dev
+
+# 8. Test locally at http://localhost:3000
 ```
 
 ---
