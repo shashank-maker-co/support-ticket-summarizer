@@ -1,8 +1,8 @@
 /**
- * Cloudflare Worker - API Proxy for Anthropic Claude
+ * Cloudflare Worker - Website Redesign Brief Generator
  *
  * This worker acts as a secure proxy between your frontend and Anthropic API.
- * It keeps your API key hidden from the browser.
+ * It takes user answers to 10 questions and generates a comprehensive redesign brief.
  *
  * Deploy to: Cloudflare Workers (Free tier: 100k requests/day)
  */
@@ -32,14 +32,25 @@ export default {
     try {
       // Parse the incoming request
       const body = await request.json();
-      const { title, description, customerEmail } = body;
+      const {
+        websiteUrl,
+        businessDescription,
+        mainGoal,
+        targetAudience,
+        notWorking,
+        isWorking,
+        desiredFeeling,
+        visualStyle,
+        currentPlatform,
+        inspirationSites
+      } = body;
 
-      // Validate input
-      if (!title || !description || !customerEmail) {
+      // Validate required fields
+      if (!businessDescription || !mainGoal) {
         return new Response(
           JSON.stringify({
             success: false,
-            error: 'Missing required fields: title, description, customerEmail'
+            error: 'Missing required fields: businessDescription, mainGoal'
           }),
           {
             status: 400,
@@ -48,19 +59,41 @@ export default {
         );
       }
 
-      // Build the prompt
-      const prompt = `
-Title: ${title}
-Customer: ${customerEmail}
-Description: ${description}
+      // Build the comprehensive prompt for Claude
+      const prompt = `You are an expert UX/UI designer and website strategist. A user wants to redesign their website and has provided the following information:
 
-Please provide:
-1. A brief summary (1-2 sentences)
-2. Priority level (low/medium/high)
-3. Suggested action for the support team
+BUSINESS CONTEXT:
+- Website URL: ${websiteUrl || 'Not provided'}
+- Business description: ${businessDescription}
+- Main redesign goal: ${mainGoal}
 
-Format your response as JSON.
-`;
+AUDIENCE & CURRENT STATE:
+- Target audience: ${targetAudience || 'General audience'}
+- What's NOT working: ${Array.isArray(notWorking) ? notWorking.join(', ') : 'Not specified'}
+- What IS working: ${Array.isArray(isWorking) ? isWorking.join(', ') : 'Not specified'}
+
+DESIGN DIRECTION:
+- Desired feeling: ${desiredFeeling || 'Professional'}
+- Visual style: ${visualStyle || 'Modern'}
+
+TECHNICAL:
+- Current platform: ${currentPlatform || 'Unknown'}
+- Inspiration websites: ${inspirationSites || 'Not provided'}
+
+YOUR TASK:
+Generate a comprehensive, actionable website redesign brief that they can use with any designer, developer, or AI tool.
+
+The brief should include:
+
+1. **Executive Summary** - One compelling paragraph capturing the essence of the redesign
+2. **Strategic Recommendations** - 3-5 key UX/UI improvements based on their goals
+3. **Visual Design Direction** - Specific color palette (with hex codes), typography suggestions, and layout ideas
+4. **Content & Messaging Strategy** - How to better communicate their value proposition
+5. **Technical Approach** - Platform recommendations and implementation considerations
+6. **Priority Roadmap** - Break down into: Quick wins (1-2 weeks), Medium-term (1-2 months), Long-term vision
+7. **Ready-to-Use Implementation Prompt** - A detailed, copy-paste ready prompt they can give to ChatGPT, Claude, or a human designer
+
+Format your entire response in clean Markdown with proper headers, bullet points, and emphasis. Be specific, actionable, and tailored to their exact answers. Make it professional enough to share with stakeholders.`;
 
       // Call Anthropic API
       const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
@@ -71,9 +104,8 @@ Format your response as JSON.
           'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: 'claude-3-haiku-20240307',
-          max_tokens: 500,
-          system: 'You are a helpful customer support assistant. Summarize support tickets concisely, highlighting the main issue and any action items.',
+          model: 'claude-3-haiku-20240307', // Fast and cheap for quick generation
+          max_tokens: 2000, // Enough for a comprehensive brief
           messages: [
             {
               role: 'user',
@@ -100,31 +132,13 @@ Format your response as JSON.
 
       const anthropicData = await anthropicResponse.json();
       const textContent = anthropicData.content.find(block => block.type === 'text');
-      const responseText = textContent ? textContent.text.trim() : '';
+      const brief = textContent ? textContent.text.trim() : '';
 
-      // Parse the JSON response from Claude
-      let result;
-      try {
-        const parsed = JSON.parse(responseText);
-        result = {
-          summary: parsed.summary || parsed.Summary || '',
-          priority: parsed.priority || parsed.Priority || 'medium',
-          suggestedAction: parsed.suggestedAction || parsed.suggested_action || parsed.action || '',
-        };
-      } catch (e) {
-        // Fallback if JSON parsing fails
-        result = {
-          summary: responseText,
-          priority: 'medium',
-          suggestedAction: 'Review ticket manually',
-        };
-      }
-
-      // Return the result
+      // Return the markdown brief
       return new Response(
         JSON.stringify({
           success: true,
-          data: result,
+          brief: brief, // Markdown-formatted comprehensive redesign brief
         }),
         {
           status: 200,

@@ -1,24 +1,27 @@
-# Support Ticket Summarizer
+# Website Redesign Brief Generator
 
-AI-powered support ticket analysis using Claude and Braintrust for evaluation.
+AI-powered tool that generates comprehensive website redesign briefs based on user input. Answer 10 questions and get a professional brief you can use with any designer, developer, or AI tool.
+
+## How It Works
+
+1. **Answer 10 Questions** about your website and business goals
+2. **AI Generates Brief** using Claude's expertise in UX/UI design
+3. **Get Your Brief** in markdown format, ready to copy and use
 
 ## Project Structure
 
 ```
 braintrust/
-├── src/
-│   └── app.ts              # Core application logic
-├── backend/
-│   └── server.ts           # Express API server
+├── cloudflare-worker/
+│   └── worker.js           # API proxy (secure Claude API calls)
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx         # React UI
+│   │   ├── App.tsx         # 10-question form + results display
 │   │   └── main.tsx
 │   └── package.json
-├── tests/
-│   ├── app.eval.ts         # Braintrust evaluations
-│   └── compare-configs.eval.ts
-└── experiment1.ts          # Simple Q&A experiment
+├── .github/workflows/
+│   └── deploy.yml          # Auto-deploy to GitHub Pages
+└── PROJECT_CONTEXT.md      # Full project documentation
 ```
 
 ## Setup
@@ -132,20 +135,29 @@ Process multiple tickets at once.
 - **Evaluation**: Braintrust
 - **Runtime**: Node.js
 
+## The 10 Questions
+
+1. Website URL (optional)
+2. Business description
+3. Main redesign goal
+4. Target audience
+5. What's NOT working (multi-select)
+6. What IS working (multi-select)
+7. Desired feeling/vibe
+8. Visual style preference
+9. Current platform
+10. Inspiration websites (optional)
+
 ## Development
 
-The app is structured to separate concerns:
+**Local testing:**
+```bash
+# Run Worker locally
+cd cloudflare-worker && wrangler dev
 
-1. **Core Logic** (`src/app.ts`): Pure business logic, easily testable
-2. **API Layer** (`backend/server.ts`): HTTP endpoints
-3. **UI Layer** (`frontend/`): User interface
-4. **Tests** (`tests/`): Braintrust evaluations
-
-This makes it easy to:
-- Test each layer independently
-- Swap out implementations (e.g., different models)
-- Run evaluations in CI/CD
-- Track performance over time
+# Run Frontend
+cd frontend && npm run dev
+```
 
 ## Deployment
 
