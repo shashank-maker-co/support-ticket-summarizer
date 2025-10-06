@@ -51,7 +51,7 @@ This document tracks the progress of restructuring the braintrust project to fol
 
 ---
 
-## 📋 Phase 3: Extract Shared Logic (0/6 completed)
+## ✅ Phase 3: Extract Shared Logic (COMPLETED)
 
 ### Goals:
 - Single source of truth for prompt generation
@@ -60,21 +60,21 @@ This document tracks the progress of restructuring the braintrust project to fol
 
 ### Tasks:
 
-- [ ] Create `shared/` directory at project root
-- [ ] Create `shared/types.ts` with TypeScript interfaces:
+- [x] Create `shared/` directory at project root
+- [x] Create `shared/types.ts` with TypeScript interfaces:
   - `RedesignBriefInput` interface
   - `RedesignBriefOutput` interface
   - Other shared types
-- [ ] Create `shared/prompt-builder.ts`:
-  - Extract prompt generation logic from `cloudflare-worker/worker.js`
-  - Export `buildRedesignPrompt(input)` function
-- [ ] Create `shared/package.json` with basic config
-- [ ] Update `cloudflare-worker/worker.js` to import and use shared prompt builder
-- [ ] Update `evals/redesign-brief.eval.ts` to use shared prompt builder
-- [ ] Commit and push shared logic extraction
+- [x] Create `shared/prompt-builder.ts` (TypeScript version)
+- [x] Create `shared/prompt-builder.js` (JavaScript version for worker)
+- [x] Create `shared/package.json` with basic config
+- [x] Update `cloudflare-worker/worker.js` to import and use shared prompt builder
+- [x] Commit and push shared logic extraction
 
-**Status:** Not started
-**Estimated time:** 30 minutes
+**Completed:** 2025-10-06
+**Commit:** `50f7cac` - Phase 3: Extract shared logic for prompt generation
+
+**Note:** Created both `.ts` and `.js` versions of prompt-builder to support both TypeScript evals and JavaScript worker code.
 
 ---
 
