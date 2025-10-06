@@ -29,6 +29,7 @@ npm-debug.log*
 
 # Cloudflare
 cloudflare-worker/.wrangler/
+cloudflare-worker/.dev.vars
 
 # Test coverage
 coverage/
