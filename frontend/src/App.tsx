@@ -95,6 +95,123 @@ function App() {
     setInspirationSites('')
   }
 
+  const fillRandomData = () => {
+    const randomBusinesses = [
+      'Sell organic coffee beans online',
+      'B2B SaaS platform for team collaboration',
+      'Freelance photography portfolio',
+      'Local bakery with online ordering',
+      'Tech startup building AI tools',
+      'Fitness coaching and meal plans',
+      'Handmade furniture e-commerce',
+      'Digital marketing agency',
+      'Pet grooming services',
+      'Online course platform for designers'
+    ]
+
+    const randomGoals = [
+      'Increase sales/conversions',
+      'Generate more leads',
+      'Build brand credibility',
+      'Improve user engagement',
+      'Reduce bounce rate',
+      'Modernize outdated appearance'
+    ]
+
+    const randomAudiences = [
+      'Young professionals (25-35)',
+      'Business decision-makers (35-55)',
+      'Students & young adults (18-25)',
+      'Creative professionals',
+      'General consumers (all ages)'
+    ]
+
+    const allNotWorking = [
+      'Looks outdated/unprofessional',
+      'Not mobile-friendly',
+      'Confusing navigation',
+      'Slow loading speed',
+      'Low conversions/poor CTAs',
+      'Hard to find information',
+      'Poor visual design',
+      'Accessibility issues'
+    ]
+
+    const allIsWorking = [
+      'Good content',
+      'Strong brand recognition',
+      'Clear value proposition',
+      'Fast performance',
+      'Good SEO',
+      'Engaged audience'
+    ]
+
+    const randomFeelings = [
+      'Professional & trustworthy',
+      'Creative & innovative',
+      'Friendly & approachable',
+      'Premium & exclusive',
+      'Fast & efficient',
+      'Fun & playful',
+      'Bold & energetic'
+    ]
+
+    const randomStyles = [
+      'Modern & minimal',
+      'Bold & colorful',
+      'Classic & elegant',
+      'Tech & futuristic',
+      'Warm & organic',
+      'Dark & mysterious',
+      'Playful & fun'
+    ]
+
+    const randomPlatforms = [
+      'WordPress',
+      'Wix',
+      'Squarespace',
+      'Shopify',
+      'Webflow',
+      'Custom/coded'
+    ]
+
+    const randomInspirations = [
+      'https://stripe.com\nhttps://linear.app',
+      'https://airbnb.com\nhttps://notion.so',
+      'https://figma.com\nhttps://vercel.com',
+      'https://apple.com\nhttps://tesla.com',
+      ''
+    ]
+
+    const randomUrls = [
+      'https://example-site.com',
+      'https://mycompany.io',
+      'https://mybusiness.co',
+      ''
+    ]
+
+    // Helper to pick random item from array
+    const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)]
+
+    // Helper to pick random subset from array
+    const pickMultiple = (arr: string[], min: number, max: number) => {
+      const count = Math.floor(Math.random() * (max - min + 1)) + min
+      const shuffled = [...arr].sort(() => Math.random() - 0.5)
+      return shuffled.slice(0, count)
+    }
+
+    setWebsiteUrl(pick(randomUrls))
+    setBusinessDescription(pick(randomBusinesses))
+    setMainGoal(pick(randomGoals))
+    setTargetAudience(pick(randomAudiences))
+    setNotWorking(pickMultiple(allNotWorking, 1, 4))
+    setIsWorking(pickMultiple(allIsWorking, 1, 3))
+    setDesiredFeeling(pick(randomFeelings))
+    setVisualStyle(pick(randomStyles))
+    setCurrentPlatform(pick(randomPlatforms))
+    setInspirationSites(pick(randomInspirations))
+  }
+
   if (!showForm && brief) {
     return (
       <div className="app">
@@ -125,6 +242,12 @@ function App() {
         <p className="subtitle">
           Answer 10 questions and get a professional redesign brief powered by AI
         </p>
+
+        <div className="random-button-container">
+          <button type="button" onClick={fillRandomData} className="random-btn">
+            🎲 Fill with Random Data
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit} className="form">
           {/* Question 1 */}

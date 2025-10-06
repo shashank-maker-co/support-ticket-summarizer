@@ -29,8 +29,31 @@ h1 {
 .subtitle {
   text-align: center;
   color: #6b7280;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   font-size: 1.1rem;
+}
+
+.random-button-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.random-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.random-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
 }
 
 .form {
