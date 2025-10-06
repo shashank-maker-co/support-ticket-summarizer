@@ -1,0 +1,10 @@
+name = "support-ticket-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Cloudflare Workers configuration
+# Deploy with: npx wrangler deploy
+
+[env.production]
+# Add your API key as a secret (don't put it here!)
+# Run: npx wrangler secret put ANTHROPIC_API_KEY

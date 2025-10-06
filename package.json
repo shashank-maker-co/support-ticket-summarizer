@@ -1,0 +1,29 @@
+{
+  "name": "braintrust",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eval:app": "npx tsx tests/app.eval.ts",
+    "eval:compare": "npx tsx tests/compare-configs.eval.ts",
+    "eval:simple": "npx tsx experiment1.ts",
+    "backend": "npx tsx backend/server.ts",
+    "frontend": "cd frontend && npm run dev",
+    "dev": "npm run backend & npm run frontend"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.64.0",
+    "braintrust": "^0.3.8",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.2",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17"
+  }
+}
