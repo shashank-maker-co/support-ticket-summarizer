@@ -1,0 +1,12 @@
+{
+  "name": "@braintrust/shared",
+  "version": "1.0.0",
+  "description": "Shared code for Website Redesign Brief Generator",
+  "type": "module",
+  "main": "prompt-builder.js",
+  "exports": {
+    ".": "./prompt-builder.js",
+    "./types": "./types.ts",
+    "./prompt-builder": "./prompt-builder.js"
+  }
+}
